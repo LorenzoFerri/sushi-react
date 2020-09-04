@@ -1,5 +1,5 @@
 import { theme } from '@chakra-ui/core';
-const myTheme: typeof theme = {
+const myTheme = {
   ...theme,
   breakpoints: ['30em', '48em', '62em', '80em'],
   fonts: {
@@ -18,6 +18,9 @@ const myTheme: typeof theme = {
     '4xl': '2.25rem',
     '5xl': '3rem',
     '6xl': '4rem',
+  },
+  config: {
+    useSystemColorMode: true,
   },
 };
 export default myTheme;

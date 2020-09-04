@@ -1,9 +1,10 @@
-import { Center, Divider, VStack } from "@chakra-ui/core";
-import React from "react";
-import { Room, Order } from "../../interface";
-import { AddRoomControl } from "./AddRoomControl";
-import { OrderRow } from "./OrderRow";
-import firebase from "../../firebase";
+import { Center, Divider, VStack } from '@chakra-ui/core';
+import React from 'react';
+import firebase from '../../firebase';
+import { Order, Room } from '../../interface';
+import { AddOrderForm } from './AddOrderForm';
+import { OrderRow } from './OrderRow';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface Props {
   room?: Room;
@@ -11,6 +12,7 @@ interface Props {
 
 export const MyOrders = (props: Props) => {
   const { room } = props;
+  const [user] = useAuthState(firebase.auth());
 
   function deleteOrder(order: Order) {
     if (!room) return;
@@ -67,21 +69,23 @@ export const MyOrders = (props: Props) => {
   }
 
   return (
-    <VStack h="100%" overflow="scroll">
-      <VStack divider={<Divider />} flexGrow={1} width="100%" spacing={0}>
+    <VStack h='100%' overflow='scroll'>
+      <VStack divider={<Divider />} flexGrow={1} width='100%' spacing={0}>
         {room?.orders.length === 0 && <Center>No orders</Center>}
-        {room?.orders.map((order) => (
-          <OrderRow
-            order={order}
-            key={order.plateId}
-            deleteOrder={deleteOrder}
-            quantityChange={quantityChange}
-            completeChange={completeChange}
-          />
-        ))}
+        {room?.orders
+          .filter((order) => order.ownerId === user?.uid)
+          .map((order) => (
+            <OrderRow
+              order={order}
+              key={order.plateId}
+              deleteOrder={deleteOrder}
+              quantityChange={quantityChange}
+              completeChange={completeChange}
+            />
+          ))}
       </VStack>
       <Divider />
-      <AddRoomControl room={room} />
+      <AddOrderForm room={room} />
     </VStack>
   );
 };

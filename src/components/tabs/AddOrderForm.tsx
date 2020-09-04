@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 import {
   VStack,
   HStack,
@@ -13,30 +13,30 @@ import {
   IconButton,
   Text,
   useToast,
-} from "@chakra-ui/core";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { MdAdd } from "react-icons/md";
-import { Order, Room } from "../../interface";
-import firebase from "../../firebase";
+} from '@chakra-ui/core';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { MdAdd } from 'react-icons/md';
+import { Order, Room } from '../../interface';
+import firebase from '../../firebase';
 
 interface Props {
   room?: Room;
 }
 
-export const AddRoomControl = (props: Props) => {
+export const AddOrderForm = (props: Props) => {
   const { room } = props;
   const [user] = useAuthState(firebase.auth());
   const [quantity, setQuantity] = useState(1);
   const [plate, setPlate] = useState<number | undefined>();
-  const [variant, setVariant] = useState<"A" | "B" | undefined>();
+  const [variant, setVariant] = useState<'A' | 'B' | undefined>();
   const [noAvocado, setNoAvocado] = useState(false);
   const toast = useToast();
   const ref = useRef<HTMLInputElement | null>(null);
 
   function toggleNoAvocado() {
     toast({
-      title: noAvocado ? "Avocado permitted" : "Avocado removed",
-      position: "top",
+      title: noAvocado ? 'Avocado permitted' : 'Avocado removed',
+      position: 'top',
       duration: 1000,
     });
     setNoAvocado(!noAvocado);
@@ -67,6 +67,7 @@ export const AddRoomControl = (props: Props) => {
         noAvocado,
         ownerName: user?.displayName,
         completed: false,
+        ownerId: user?.uid,
       };
       firebase
         .firestore()
@@ -88,26 +89,26 @@ export const AddRoomControl = (props: Props) => {
   }
 
   return (
-    <VStack width="100%" p={3} pt={0}>
+    <VStack width='100%' p={3} pt={0}>
       <Text>Add an order:</Text>
-      <HStack width="100%" justify="center">
+      <HStack width='100%' justify='center'>
         <NumberInput
           onChange={(valueString) => setPlate(parseInt(valueString))}
           value={plate || undefined}
-          variant="filled"
+          variant='filled'
           flexGrow={1}
-          maxW="100px"
+          maxW='100px'
           ref={ref}
         >
-          <NumberInputField autoFocus={true} placeholder="ID" />
+          <NumberInputField autoFocus={true} placeholder='ID' />
         </NumberInput>
         <NumberInput
           onChange={(valueString) => setQuantity(parseInt(valueString))}
           value={quantity}
           flexGrow={1}
-          variant="filled"
+          variant='filled'
           min={1}
-          maxW="100px"
+          maxW='100px'
         >
           <NumberInputField />
           <NumberInputStepper>
@@ -116,33 +117,33 @@ export const AddRoomControl = (props: Props) => {
           </NumberInputStepper>
         </NumberInput>
         <Select
-          variant="filled"
+          variant='filled'
           value={variant}
           onChange={(ev) =>
             setVariant((ev.currentTarget.value as any) || undefined)
           }
           flexGrow={1}
-          maxW="70px"
+          maxW='70px'
         >
           <option value={undefined}></option>
-          <option value="A">A</option>
-          <option value="B">B</option>
+          <option value='A'>A</option>
+          <option value='B'>B</option>
         </Select>
-        <Divider orientation="vertical" />
+        <Divider orientation='vertical' />
         <Button
-          colorScheme={noAvocado ? "red" : undefined}
+          colorScheme={noAvocado ? 'red' : undefined}
           onClick={toggleNoAvocado}
         >
-          <span role="img" aria-label="avocado">
+          <span role='img' aria-label='avocado'>
             🥑
           </span>
         </Button>
 
-        <Divider orientation="vertical" />
+        <Divider orientation='vertical' />
         <IconButton
           icon={<MdAdd />}
-          aria-label="Add order"
-          colorScheme="teal"
+          aria-label='Add order'
+          colorScheme='teal'
           onClick={addOrder}
         />
       </HStack>

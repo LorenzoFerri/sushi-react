@@ -8,9 +8,10 @@ export interface Room {
 
 export interface Order {
   ownerName: string | undefined | null;
+  ownerId: string | undefined;
   plateId: number;
   quantity: number;
-  variant?: "A" | "B";
+  variant?: 'A' | 'B';
   noAvocado?: boolean;
   completed: boolean;
 }
