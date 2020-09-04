@@ -3,21 +3,21 @@ import {
   IconButton,
   Spinner,
   Stack,
+  Text,
   useDisclosure,
-  useColorMode,
-} from '@chakra-ui/core';
-import React, { useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-import { BiUser } from 'react-icons/bi';
-import { MdAdd } from 'react-icons/md';
-import firebase from '../firebase';
-import { Room } from '../interface';
-import { CreateRoomModal } from './modals/CreateRoomModal';
-import { Nav } from './Nav';
-import { RoomCard } from './RoomCard';
-import { UserModal } from './modals/UserModal';
-import { withRouter, useHistory } from 'react-router-dom';
+} from "@chakra-ui/core";
+import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { BiUser } from "react-icons/bi";
+import { MdAdd } from "react-icons/md";
+import { useHistory, withRouter } from "react-router-dom";
+import firebase from "../firebase";
+import { Room } from "../interface";
+import { CreateRoomModal } from "./modals/CreateRoomModal";
+import { UserModal } from "./modals/UserModal";
+import { Nav } from "./Nav";
+import { RoomCard } from "./RoomCard";
 
 interface Props {}
 
@@ -26,9 +26,9 @@ const Home = (props: Props) => {
   const history = useHistory();
   const [user] = useAuthState(firebase.auth());
   const [rooms, roomsLoading] = useCollectionData<Room>(
-    firebase.firestore().collection('rooms'),
+    firebase.firestore().collection("rooms"),
     {
-      idField: 'id',
+      idField: "id",
     }
   );
   const userDisc = useDisclosure();
@@ -37,7 +37,7 @@ const Home = (props: Props) => {
   function joinRoom(id: string) {
     firebase
       .firestore()
-      .collection('rooms')
+      .collection("rooms")
       .doc(id)
       .set({ users: [user?.displayName] }, { merge: true });
     history.push(`/room/${id}`);
@@ -49,15 +49,15 @@ const Home = (props: Props) => {
       <CreateRoomModal onClose={addDisc.onClose} isOpen={addDisc.isOpen} />
       <Nav>
         <IconButton
-          variant='outline'
+          variant="outline"
           icon={<MdAdd />}
-          aria-label='Add a room'
+          aria-label="Add a room"
           onClick={addDisc.onOpen}
         />
         <IconButton
-          variant='outline'
+          variant="outline"
           icon={<BiUser />}
-          aria-label='User settings'
+          aria-label="User settings"
           onClick={userDisc.onOpen}
         />
       </Nav>
@@ -65,8 +65,11 @@ const Home = (props: Props) => {
         {rooms?.map((room) => (
           <RoomCard room={room} joinRoom={joinRoom} key={room.id} />
         ))}
+        {rooms?.length === 0 && (
+          <Text align="center">No rooms, create a new one</Text>
+        )}
       </Stack>
-      <Box textAlign='center'>{roomsLoading && <Spinner />}</Box>
+      <Box textAlign="center">{roomsLoading && <Spinner />}</Box>
     </>
   );
 };

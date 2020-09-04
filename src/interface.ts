@@ -7,9 +7,10 @@ export interface Room {
 }
 
 export interface Order {
-  plateId: string;
-  variant?: 'A' | 'B';
-  notes?: string;
+  ownerName: string | undefined | null;
+  plateId: number;
   quantity: number;
-  ownerName: string;
+  variant?: "A" | "B";
+  noAvocado?: boolean;
+  completed: boolean;
 }

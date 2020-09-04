@@ -1,23 +1,9 @@
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Select,
-  VStack,
-} from '@chakra-ui/core';
-import React, { useState } from 'react';
-import { MdAdd, MdSettings } from 'react-icons/md';
-import { Room } from '../../interface';
+import { Center, Divider, VStack } from "@chakra-ui/core";
+import React from "react";
+import { Room, Order } from "../../interface";
+import { AddRoomControl } from "./AddRoomControl";
+import { OrderRow } from "./OrderRow";
+import firebase from "../../firebase";
 
 interface Props {
   room?: Room;
@@ -25,61 +11,77 @@ interface Props {
 
 export const MyOrders = (props: Props) => {
   const { room } = props;
-  const [quantity, setQuantity] = useState(1);
-  const [plate, setPlate] = useState<number | undefined>();
-  const [variant, setVariant] = useState<string | undefined>();
+
+  function deleteOrder(order: Order) {
+    if (!room) return;
+    const previous = room.orders.findIndex(
+      (ord) =>
+        ord.plateId === order.plateId &&
+        ord.variant === order.variant &&
+        ord.noAvocado === order.noAvocado
+    );
+    if (previous !== -1) {
+      const orders: Order[] = JSON.parse(JSON.stringify(room.orders));
+      orders.splice(previous, 1);
+      firebase
+        .firestore()
+        .doc(`rooms/${room.id}`)
+        .set({ ...room, orders });
+    }
+  }
+
+  function quantityChange(order: Order, amount: number) {
+    if (!room) return;
+    const previous = room.orders.findIndex(
+      (ord) =>
+        ord.plateId === order.plateId &&
+        ord.variant === order.variant &&
+        ord.noAvocado === order.noAvocado
+    );
+    if (previous !== -1) {
+      const orders: Order[] = JSON.parse(JSON.stringify(room.orders));
+      orders[previous].quantity += amount;
+      firebase
+        .firestore()
+        .doc(`rooms/${room.id}`)
+        .set({ ...room, orders });
+    }
+  }
+
+  function completeChange(order: Order, completed: boolean) {
+    if (!room) return;
+    const previous = room.orders.findIndex(
+      (ord) =>
+        ord.plateId === order.plateId &&
+        ord.variant === order.variant &&
+        ord.noAvocado === order.noAvocado
+    );
+    if (previous !== -1) {
+      const orders: Order[] = JSON.parse(JSON.stringify(room.orders));
+      orders[previous].completed = completed;
+      firebase
+        .firestore()
+        .doc(`rooms/${room.id}`)
+        .set({ ...room, orders });
+    }
+  }
 
   return (
-    <VStack height='100%'>
-      <VStack divider={<Divider />} flexGrow={1}>
+    <VStack h="100%" overflow="scroll">
+      <VStack divider={<Divider />} flexGrow={1} width="100%" spacing={0}>
         {room?.orders.length === 0 && <Center>No orders</Center>}
         {room?.orders.map((order) => (
-          <Box borderWidth='1px' rounded='lg'>
-            {order.plateId} {order.notes}
-          </Box>
+          <OrderRow
+            order={order}
+            key={order.plateId}
+            deleteOrder={deleteOrder}
+            quantityChange={quantityChange}
+            completeChange={completeChange}
+          />
         ))}
       </VStack>
       <Divider />
-      <VStack width='100%'>
-        <Button variant='ghost'>Add an order:</Button>
-        <HStack width='100%'>
-          <Heading size='sm'>Id</Heading>
-          <NumberInput
-            onChange={(valueString) => setPlate(parseInt(valueString))}
-            value={plate}
-            flexGrow={1}
-          >
-            <NumberInputField autoFocus={true} />
-          </NumberInput>
-          <Heading size='sm'>#</Heading>
-          <NumberInput
-            onChange={(valueString) => setQuantity(parseInt(valueString))}
-            value={quantity}
-            flexGrow={1}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <Icon as={MdSettings} />
-          <Select
-            value={variant}
-            onChange={(ev) => setVariant(ev.currentTarget.value || undefined)}
-            flexGrow={1}
-          >
-            <option value={undefined}></option>
-            <option value='A'>A</option>
-            <option value='B'>B</option>
-          </Select>
-          <IconButton
-            icon={<MdAdd />}
-            aria-label='Add order'
-            colorScheme='teal'
-          />
-        </HStack>
-      </VStack>
+      <AddRoomControl room={room} />
     </VStack>
   );
 };

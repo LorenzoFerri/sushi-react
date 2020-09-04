@@ -1,18 +1,11 @@
-import {
-  ChakraProvider,
-  ColorModeProvider,
-  useColorMode,
-  ColorModeScript,
-} from '@chakra-ui/core';
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/Home';
-import { Login } from './components/Login';
-import { RoomPage } from './components/RoomPage';
-import { PrivateRoute } from './PrivateRoute';
-import { useMediaPredicate } from 'react-media-hook';
-
-import theme from './theme';
+import { ChakraProvider } from "@chakra-ui/core";
+import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Home from "./components/Home";
+import { Login } from "./components/Login";
+import { RoomPage } from "./components/RoomPage";
+import { PrivateRoute } from "./PrivateRoute";
+import theme from "./theme";
 
 function App() {
   return (
@@ -26,13 +19,13 @@ function AppRouter() {
   return (
     <Router>
       <Switch>
-        <PrivateRoute exact path='/'>
+        <PrivateRoute exact path="/">
           <Home />
         </PrivateRoute>
-        <Route path='/login'>
+        <Route path="/login">
           <Login />
         </Route>
-        <Route path='/room/:id' children={<RoomPage />} />
+        <PrivateRoute path="/room/:id" children={<RoomPage />} />
       </Switch>
     </Router>
   );
