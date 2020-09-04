@@ -3,5 +3,13 @@ export interface Room {
   name: string;
   owner: string;
   users: string[];
-  orders: any[];
+  orders: Order[];
+}
+
+export interface Order {
+  plateId: string;
+  variant?: 'A' | 'B';
+  notes?: string;
+  quantity: number;
+  ownerName: string;
 }

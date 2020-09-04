@@ -10,7 +10,7 @@ import {
   Button,
 } from '@chakra-ui/core';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from '../firebase';
+import firebase from '../../firebase';
 import { BiLogOut } from 'react-icons/bi';
 
 interface Props {

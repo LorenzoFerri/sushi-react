@@ -13,6 +13,7 @@ import {
   Text,
   useDisclosure,
   useToast,
+  VStack,
 } from '@chakra-ui/core';
 import React, { ReactElement, useEffect } from 'react';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
@@ -21,15 +22,17 @@ import { BsPersonFill } from 'react-icons/bs';
 import { CgUserList } from 'react-icons/cg';
 import { IoMdList, IoMdRestaurant } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import firebase from '../firebase';
 import { Room } from '../interface';
 import { Nav } from './Nav';
-import { UserModal } from './UserModal';
+import { UserModal } from './modals/UserModal';
+import { MyOrders } from './tabs/MyOrders';
 interface Props {}
 
 export function RoomPage(_props: Props): ReactElement {
   let { id }: { id: string } = useParams();
+  const history = useHistory();
   // const theme = useTheme();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [room, loading, error] = useDocumentData<Room>(
@@ -38,14 +41,13 @@ export function RoomPage(_props: Props): ReactElement {
   const toast = useToast();
 
   useEffect(() => {
-    if (error) {
+    if (!loading && !room) {
       toast({
         title: 'Error loading the room',
-        description: error.message,
         status: 'error',
       });
     }
-  }, [error]);
+  }, [error, toast, loading, room]);
 
   function deleteRoom() {
     firebase
@@ -53,7 +55,7 @@ export function RoomPage(_props: Props): ReactElement {
       .doc(`rooms/${id}`)
       .delete()
       .then(() => {
-        window.location.href = '/';
+        history.replace('/');
       })
       .catch((error) => {
         toast({
@@ -64,7 +66,7 @@ export function RoomPage(_props: Props): ReactElement {
       });
   }
   return (
-    <>
+    <VStack height='100%'>
       <UserModal onClose={onClose} isOpen={isOpen} />
       <Nav>
         <IconButton
@@ -80,7 +82,7 @@ export function RoomPage(_props: Props): ReactElement {
           onClick={onOpen}
         />
       </Nav>
-      <HStack spacing={1} p='2' justify='space-between'>
+      <HStack spacing={1} p='2' justify='space-between' width='100%'>
         <HStack>
           <Text fontSize='md'>Room:</Text>
           <Skeleton isLoaded={!loading} minW='180px'>
@@ -91,7 +93,13 @@ export function RoomPage(_props: Props): ReactElement {
           <TagLeftIcon as={BsPersonFill} /> {room?.users.length}
         </Tag>
       </HStack>
-      <Tabs isFitted>
+      <Tabs
+        isFitted
+        height='100%'
+        flexGrow={1}
+        display='flex'
+        flexDirection='column'
+      >
         <TabList>
           <Tab isTruncated>
             <Icon as={IoMdRestaurant} mr='1' /> My Orders
@@ -104,9 +112,9 @@ export function RoomPage(_props: Props): ReactElement {
           </Tab>
         </TabList>
 
-        <TabPanels>
-          <TabPanel>
-            <p>one!</p>
+        <TabPanels flexGrow={1} display='flex' flexDirection='column'>
+          <TabPanel flexGrow={1} display='flex' flexDirection='column'>
+            <MyOrders room={room} />
           </TabPanel>
           <TabPanel>
             <p>two!</p>
@@ -117,6 +125,6 @@ export function RoomPage(_props: Props): ReactElement {
         </TabPanels>
       </Tabs>
       {/* </Container> */}
-    </>
+    </VStack>
   );
 }

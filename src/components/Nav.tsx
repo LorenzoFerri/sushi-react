@@ -6,7 +6,7 @@ interface Props {}
 
 export const Nav = (props: PropsWithChildren<Props>) => {
   return (
-    <Box marginBottom={2}>
+    <Box marginBottom={2} width='100%'>
       <Flex align='center' justify='space-between' padding={4}>
         <Heading>
           <Link to='/'>

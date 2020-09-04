@@ -4,22 +4,26 @@ import {
   Spinner,
   Stack,
   useDisclosure,
+  useColorMode,
 } from '@chakra-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { BiUser } from 'react-icons/bi';
 import { MdAdd } from 'react-icons/md';
 import firebase from '../firebase';
 import { Room } from '../interface';
-import { CreateRoomModal } from './CreateRoomModal';
+import { CreateRoomModal } from './modals/CreateRoomModal';
 import { Nav } from './Nav';
 import { RoomCard } from './RoomCard';
-import { UserModal } from './UserModal';
+import { UserModal } from './modals/UserModal';
+import { withRouter, useHistory } from 'react-router-dom';
+
 interface Props {}
 
-export const Home = () => {
+const Home = (props: Props) => {
   // const theme = useTheme();
+  const history = useHistory();
   const [user] = useAuthState(firebase.auth());
   const [rooms, roomsLoading] = useCollectionData<Room>(
     firebase.firestore().collection('rooms'),
@@ -36,7 +40,7 @@ export const Home = () => {
       .collection('rooms')
       .doc(id)
       .set({ users: [user?.displayName] }, { merge: true });
-    window.location.href = `/room/${id}`;
+    history.push(`/room/${id}`);
   }
 
   return (
@@ -66,3 +70,5 @@ export const Home = () => {
     </>
   );
 };
+
+export default withRouter(Home);

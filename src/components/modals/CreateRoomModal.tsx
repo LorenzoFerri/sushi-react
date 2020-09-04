@@ -17,7 +17,7 @@ import {
   InputRightElement,
 } from '@chakra-ui/core';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from '../firebase';
+import firebase from '../../firebase';
 import { MdAdd, MdRefresh, MdCancel } from 'react-icons/md';
 import faker from 'faker';
 
