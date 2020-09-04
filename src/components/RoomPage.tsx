@@ -28,6 +28,7 @@ import { Room } from "../interface";
 import { UserModal } from "./modals/UserModal";
 import { Nav } from "./Nav";
 import { MyOrders } from "./tabs/MyOrders";
+import { AllOrders } from "./tabs/AllOrders";
 interface Props {}
 
 export function RoomPage(_props: Props): ReactElement {
@@ -117,8 +118,8 @@ export function RoomPage(_props: Props): ReactElement {
           <TabPanel flexGrow={1} display="flex" flexDirection="column" p={0}>
             <MyOrders room={room} />
           </TabPanel>
-          <TabPanel>
-            <p>two!</p>
+          <TabPanel p={0}>
+            <AllOrders room={room} />
           </TabPanel>
           <TabPanel>
             <p>three!</p>
