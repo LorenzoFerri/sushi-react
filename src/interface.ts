@@ -12,6 +12,7 @@ export interface Order {
   plateId: number;
   quantity: number;
   variant?: 'A' | 'B';
+  date: number;
   noAvocado?: boolean;
   completed: boolean;
 }

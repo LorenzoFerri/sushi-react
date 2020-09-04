@@ -71,9 +71,10 @@ export const MyOrders = (props: Props) => {
   return (
     <VStack h='100%' overflow='scroll'>
       <VStack divider={<Divider />} flexGrow={1} width='100%' spacing={0}>
-        {room?.orders.length === 0 && <Center>No orders</Center>}
+        {room?.orders.length === 0 && <Center mt='3'>No orders</Center>}
         {room?.orders
           .filter((order) => order.ownerId === user?.uid)
+          .sort((a, b) => a.date - b.date)
           .map((order) => (
             <OrderRow
               order={order}

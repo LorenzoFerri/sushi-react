@@ -27,80 +27,25 @@ export const AddOrderForm = (props: Props) => {
   const { room } = props;
   const [user] = useAuthState(firebase.auth());
   const [quantity, setQuantity] = useState(1);
-  const [plate, setPlate] = useState<number | undefined>();
-  const [variant, setVariant] = useState<'A' | 'B' | undefined>();
+  const [plate, setPlate] = useState<string>('');
+  const [variant, setVariant] = useState<'A' | 'B' | 'standard'>('standard');
   const [noAvocado, setNoAvocado] = useState(false);
   const toast = useToast();
   const ref = useRef<HTMLInputElement | null>(null);
-
-  function toggleNoAvocado() {
-    toast({
-      title: noAvocado ? 'Avocado permitted' : 'Avocado removed',
-      position: 'top',
-      duration: 1000,
-    });
-    setNoAvocado(!noAvocado);
-  }
-
-  function addOrder() {
-    if (!room || !plate) return;
-
-    const previous = room.orders.findIndex(
-      (ord) =>
-        ord.plateId === plate &&
-        ord.variant === variant &&
-        ord.noAvocado === noAvocado
-    );
-    if (previous !== -1) {
-      const orders: Order[] = JSON.parse(JSON.stringify(room.orders));
-      orders[previous].quantity += quantity;
-      firebase
-        .firestore()
-        .doc(`rooms/${room.id}`)
-        .set({ orders }, { merge: true })
-        .then(cleanUpForms);
-    } else {
-      let newOrder: Order = {
-        plateId: plate,
-        quantity,
-        variant,
-        noAvocado,
-        ownerName: user?.displayName,
-        completed: false,
-        ownerId: user?.uid,
-      };
-      firebase
-        .firestore()
-        .doc(`rooms/${room.id}`)
-        .set(
-          { orders: JSON.parse(JSON.stringify([...room.orders, newOrder])) },
-          { merge: true }
-        )
-        .then(cleanUpForms);
-    }
-  }
-
-  function cleanUpForms() {
-    setNoAvocado(false);
-    setPlate(undefined);
-    setQuantity(1);
-    setVariant(undefined);
-    ref.current?.focus();
-  }
 
   return (
     <VStack width='100%' p={3} pt={0}>
       <Text>Add an order:</Text>
       <HStack width='100%' justify='center'>
         <NumberInput
-          onChange={(valueString) => setPlate(parseInt(valueString))}
-          value={plate || undefined}
-          variant='filled'
+          onChange={(valueString) => setPlate(valueString)}
+          value={plate}
           flexGrow={1}
+          variant='filled'
+          min={1}
           maxW='100px'
-          ref={ref}
         >
-          <NumberInputField autoFocus={true} placeholder='ID' />
+          <NumberInputField placeholder='ID' ref={ref} autoFocus />
         </NumberInput>
         <NumberInput
           onChange={(valueString) => setQuantity(parseInt(valueString))}
@@ -125,7 +70,7 @@ export const AddOrderForm = (props: Props) => {
           flexGrow={1}
           maxW='70px'
         >
-          <option value={undefined}></option>
+          <option value='standard'></option>
           <option value='A'>A</option>
           <option value='B'>B</option>
         </Select>
@@ -138,7 +83,6 @@ export const AddOrderForm = (props: Props) => {
             🥑
           </span>
         </Button>
-
         <Divider orientation='vertical' />
         <IconButton
           icon={<MdAdd />}
@@ -149,4 +93,61 @@ export const AddOrderForm = (props: Props) => {
       </HStack>
     </VStack>
   );
+
+  function toggleNoAvocado() {
+    toast({
+      title: noAvocado ? 'Avocado permitted' : 'Avocado removed',
+      position: 'top',
+      duration: 1000,
+    });
+    setNoAvocado(!noAvocado);
+  }
+
+  function addOrder() {
+    if (!room || !parseInt(plate)) return;
+
+    const previous = room.orders.findIndex(
+      (ord) =>
+        ord.plateId === parseInt(plate) &&
+        (ord.variant === variant ||
+          (variant === 'standard' && ord.variant === undefined)) &&
+        ord.noAvocado === noAvocado
+    );
+    if (previous !== -1) {
+      const orders: Order[] = JSON.parse(JSON.stringify(room.orders));
+      orders[previous].quantity += quantity;
+      firebase
+        .firestore()
+        .doc(`rooms/${room.id}`)
+        .set({ orders }, { merge: true })
+        .then(cleanUpForms);
+    } else {
+      let newOrder: Order = {
+        plateId: parseInt(plate),
+        quantity,
+        variant: variant !== 'standard' ? (variant as 'A' | 'B') : undefined,
+        noAvocado,
+        ownerName: user?.displayName,
+        completed: false,
+        date: new Date().getTime(),
+        ownerId: user?.uid,
+      };
+      firebase
+        .firestore()
+        .doc(`rooms/${room.id}`)
+        .set(
+          { orders: JSON.parse(JSON.stringify([...room.orders, newOrder])) },
+          { merge: true }
+        )
+        .then(cleanUpForms);
+    }
+  }
+
+  function cleanUpForms() {
+    setNoAvocado(false);
+    setPlate('');
+    setQuantity(1);
+    setVariant('standard');
+    ref.current?.focus();
+  }
 };
