@@ -5,6 +5,7 @@ import { Login } from "./components/Login";
 import { Home } from "./components/Home";
 import { PrivateRoute } from "./PrivateRoute";
 import theme from "./theme";
+import { RoomPage } from "./components/RoomPage";
 
 function App() {
   return (
@@ -16,9 +17,10 @@ function App() {
             <PrivateRoute exact path="/">
               <Home />
             </PrivateRoute>
-            <Route exact path="/login">
+            <Route path="/login">
               <Login />
             </Route>
+            <Route path="/room/:id" children={<RoomPage />} />
           </Switch>
         </Router>
       </ColorModeProvider>
