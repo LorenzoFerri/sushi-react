@@ -27,8 +27,8 @@ export function RoomPage(_props: Props): ReactElement {
     firebase.firestore().doc(`rooms/${id}`)
   );
   return (
-    <Box padding={theme.space[10]}>
-      <Flex align="center" justify="space-between">
+    <Box>
+      <Flex align="center" justify="space-between" p={4}>
         <Heading>
           <Link to="/">
             <span role="img" aria-label="Sushi emoji">

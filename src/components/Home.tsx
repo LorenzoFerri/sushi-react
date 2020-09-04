@@ -50,8 +50,14 @@ export const Home = () => {
   }
 
   return (
-    <Stack padding={theme.space[10]} spacing={3} textAlign="center">
-      <Flex align="center" justify="space-between">
+    <Stack spacing={3} textAlign="center">
+      <Flex
+        align="center"
+        justify="space-between"
+        padding={4}
+        paddingBottom={0}
+        marginBottom={0}
+      >
         <Heading>
           <span role="img" aria-label="Sushi emoji">
             🍣
@@ -74,9 +80,7 @@ export const Home = () => {
         </Stack>
       </Flex>
       <Divider />
-      <Heading></Heading>
-
-      <Stack spacing={2}>
+      <Stack spacing={2} padding={4}>
         {rooms?.map((room) => (
           <Box
             key={room.id}
@@ -87,6 +91,7 @@ export const Home = () => {
             p="4"
             display="flex"
             as="button"
+            bg="rgba(0,0,0,0.02)"
             justifyContent="space-between"
           >
             <Box>
