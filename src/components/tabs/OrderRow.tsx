@@ -1,8 +1,8 @@
+import { Box, Checkbox, HStack, IconButton, Tag } from "@chakra-ui/core";
 import React from "react";
-import { Order } from "../../interface";
-import { HStack, Box, Checkbox, Tag, IconButton } from "@chakra-ui/core";
-import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
+import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
+import { Order } from "../../interface";
 
 interface Props {
   order: Order;
@@ -13,7 +13,6 @@ interface Props {
 
 export const OrderRow = (props: Props) => {
   const { order, deleteOrder, quantityChange, completeChange } = props;
-
   return (
     <HStack
       width="100%"
@@ -22,7 +21,7 @@ export const OrderRow = (props: Props) => {
       justify="space-between"
       maxW="600px"
       opacity={order.completed ? 0.7 : 1}
-      bg={order.completed ? "rgba(0,0,0,0.06)" : undefined}
+      bgColor={order.completed ? "rgba(127,127,127,0.2)" : undefined}
       p={2}
       pl={3}
     >
