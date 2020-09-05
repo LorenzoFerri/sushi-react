@@ -29,6 +29,7 @@ import { UserModal } from "./modals/UserModal";
 import { Nav } from "./Nav";
 import { MyOrders } from "./tabs/MyOrders";
 import { AllOrders } from "./tabs/AllOrders";
+import { UserList } from "./tabs/UserList";
 interface Props {}
 
 export function RoomPage(_props: Props): ReactElement {
@@ -89,19 +90,28 @@ export function RoomPage(_props: Props): ReactElement {
         <HStack>
           <Text fontSize="md">Room:</Text>
           <Skeleton isLoaded={!loading} minW="180px">
-            <Tag fontSize="md">{room?.name}</Tag>
+            <Tag fontSize="md" isTruncated>
+              {room?.name}
+            </Tag>
           </Skeleton>
         </HStack>
-
-        <Tag colorScheme="blue">
-          <TagLeftIcon as={IoMdList} />
-          {room?.orders.reduce((acc, cur) => acc + cur.quantity, 0)}
-        </Tag>
-        <Tag colorScheme="teal">
-          <TagLeftIcon as={BsPersonFill} /> {room?.users.length}
-        </Tag>
+        <HStack>
+          <Tag colorScheme="blue">
+            <TagLeftIcon as={IoMdList} />
+            {room?.orders.reduce((acc, cur) => acc + cur.quantity, 0)}
+          </Tag>
+          <Tag colorScheme="teal">
+            <TagLeftIcon as={BsPersonFill} /> {room?.users.length}
+          </Tag>
+        </HStack>
       </HStack>
-      <Tabs width="100%" flexGrow={1} display="flex" flexDirection="column">
+      <Tabs
+        width="100%"
+        flexGrow={1}
+        display="flex"
+        flexDirection="column"
+        overflow="hidden"
+      >
         <TabList justifyContent="center">
           <Tab isTruncated>
             <Icon as={IoMdRestaurant} mr="1" /> My Orders
@@ -114,15 +124,38 @@ export function RoomPage(_props: Props): ReactElement {
           </Tab>
         </TabList>
 
-        <TabPanels flexGrow={1} display="flex" flexDirection="column">
-          <TabPanel flexGrow={1} display="flex" flexDirection="column" p={0}>
+        <TabPanels
+          flexGrow={1}
+          display="flex"
+          flexDirection="column"
+          overflow="hidden"
+        >
+          <TabPanel
+            flexGrow={1}
+            display="flex"
+            flexDirection="column"
+            p={0}
+            overflow="hidden"
+          >
             <MyOrders room={room} />
           </TabPanel>
-          <TabPanel p={0}>
+          <TabPanel
+            flexGrow={1}
+            display="flex"
+            flexDirection="column"
+            p={0}
+            overflow="hidden"
+          >
             <AllOrders room={room} />
           </TabPanel>
-          <TabPanel>
-            <p>three!</p>
+          <TabPanel
+            flexGrow={1}
+            display="flex"
+            flexDirection="column"
+            p={0}
+            overflow="hidden"
+          >
+            <UserList room={room} />
           </TabPanel>
         </TabPanels>
       </Tabs>

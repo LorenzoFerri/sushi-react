@@ -39,7 +39,10 @@ const Home = (props: Props) => {
       .firestore()
       .collection("rooms")
       .doc(id)
-      .set({ users: [user?.displayName] }, { merge: true });
+      .set(
+        { users: firebase.firestore.FieldValue.arrayUnion(user?.displayName) },
+        { merge: true }
+      );
     history.push(`/room/${id}`);
   }
 

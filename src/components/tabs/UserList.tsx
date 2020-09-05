@@ -21,15 +21,12 @@ interface Props {
   room?: Room;
 }
 
-export const AllOrders = (props: Props) => {
+export const UserList = (props: Props) => {
   const { room } = props;
   const [groupedOrders, setGroupedOrders] = useState<_.Dictionary<Order[]>>({});
 
   useEffect(() => {
-    const newGroupedOrder = _.groupBy(
-      room?.orders,
-      (value) => `${value.plateId}-${value.variant || 0}-${value.noAvocado}`
-    );
+    const newGroupedOrder = _.groupBy(room?.orders, (ord) => ord.ownerName);
     setGroupedOrders(newGroupedOrder);
   }, [room]);
 
@@ -37,42 +34,17 @@ export const AllOrders = (props: Props) => {
     <Accordion allowToggle overflow="auto">
       {room?.orders.length === 0 && <Center mt="3">No orders</Center>}
       {Object.keys(groupedOrders)
-        .sort((a, b) => {
-          const [plateIdA, variantA, noAvocadoA] = a.split("-");
-          const [plateIdB, variantB] = b.split("-");
-
-          if (plateIdB === plateIdA) {
-            if (variantA === variantB) {
-              return noAvocadoA === "true" ? 1 : -1;
-            }
-            return variantA.charCodeAt(0) - variantB.charCodeAt(0);
-          }
-
-          return parseInt(plateIdA) - parseInt(plateIdB);
-        })
-        .map((key) => {
-          const [plateId, variant, noAvocado] = key.split("-");
+        .sort()
+        .map((name) => {
           return (
-            <AccordionItem key={key}>
+            <AccordionItem key={name}>
               <AccordionButton w="100%" justifyContent="space-between">
                 <HStack>
                   <Box width="140px" textAlign="left">
-                    <Tag>{plateId}</Tag>
-                    {variant !== "0" && (
-                      <Tag ml={1} colorScheme="orange">
-                        {variant}
-                      </Tag>
-                    )}
-                    {noAvocado === "true" && (
-                      <Tag ml={1} colorScheme="red">
-                        <span role="img" aria-label="avocado">
-                          🥑
-                        </span>
-                      </Tag>
-                    )}
+                    <Tag>{name}</Tag>
                   </Box>
                   <Tag colorScheme="blue">
-                    {groupedOrders[key].reduce(
+                    {groupedOrders[name].reduce(
                       (acc, cur) => acc + cur.quantity,
                       0
                     )}
@@ -82,7 +54,7 @@ export const AllOrders = (props: Props) => {
               </AccordionButton>
               <AccordionPanel p={0}>
                 <VStack width="100%" spacing={0} divider={<StackDivider />}>
-                  {groupedOrders[key].map((order) => {
+                  {groupedOrders[name].map((order) => {
                     return (
                       <Grid
                         templateColumns="2fr 1fr 1fr"
@@ -93,19 +65,26 @@ export const AllOrders = (props: Props) => {
                         padding={3}
                         pl={10}
                         w="100%"
-                        key={`${key}-${order.ownerId}`}
+                        key={`${name}-${order.ownerId}`}
                       >
-                        <Tag
-                          flexGrow={1}
-                          flexShrink={1}
-                          maxW="200px"
-                          isTruncated
-                        >
-                          {order.ownerName}
-                        </Tag>
-                        <Box>
-                          <Tag>{order.quantity}</Tag>
-                        </Box>
+                        <HStack>
+                          <Box width="140px" textAlign="left">
+                            <Tag>{order.plateId}</Tag>
+                            {order.variant && (
+                              <Tag ml={1} colorScheme="orange">
+                                {order.variant}
+                              </Tag>
+                            )}
+                            {order.noAvocado && (
+                              <Tag ml={1} colorScheme="red">
+                                <span role="img" aria-label="avocado">
+                                  🥑
+                                </span>
+                              </Tag>
+                            )}
+                          </Box>
+                          <Tag colorScheme="blue">{order.quantity}</Tag>
+                        </HStack>
                         {order.completed && (
                           <HStack justifyContent="flex-end">
                             <Tag colorScheme="teal">
