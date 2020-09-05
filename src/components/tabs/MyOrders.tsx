@@ -1,10 +1,10 @@
-import { Center, Divider, VStack } from "@chakra-ui/core";
-import React from "react";
-import firebase from "../../firebase";
-import { Order, Room } from "../../interface";
-import { AddOrderForm } from "./AddOrderForm";
-import { OrderRow } from "./OrderRow";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { Center, Divider, VStack } from '@chakra-ui/core';
+import React from 'react';
+import firebase from '../../firebase';
+import { Order, Room } from '../../interface';
+import { AddOrderForm } from './AddOrderForm';
+import { OrderRow } from './OrderRow';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface Props {
   room?: Room;
@@ -72,15 +72,15 @@ export const MyOrders = (props: Props) => {
   }
 
   return (
-    <VStack h="100%" overflow="hidden" spacing={0}>
+    <VStack h='100%' overflow='hidden' spacing={0}>
       <VStack
         divider={<Divider />}
         flexGrow={1}
-        width="100%"
+        width='100%'
         spacing={0}
-        overflow="scroll"
+        overflow='auto'
       >
-        {room?.orders.length === 0 && <Center mt="3">No orders</Center>}
+        {room?.orders.length === 0 && <Center mt='3'>No orders</Center>}
         {room?.orders
           .filter((order) => order.ownerId === user?.uid)
           .sort((a, b) => a.date - b.date)
